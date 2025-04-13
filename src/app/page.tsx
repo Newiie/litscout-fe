@@ -7,6 +7,8 @@ import Sidebar from "@/components/Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { apiUrl } from "@/lib/config";
+import { toast } from "sonner";
 
 const fieldOfStudyData = {
   "--- Not Specified ---": "",
@@ -98,6 +100,8 @@ export default function Home() {
     research_topic: string;
   } | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState('');
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -110,7 +114,6 @@ export default function Home() {
     const trimmedKeyword = keywordInput.trim();
     if (trimmedKeyword && !keyWords.includes(trimmedKeyword)) {
       setKeyWords(keywords => [...keywords, trimmedKeyword]);
-      // Update form data with new keywords
       setFormData(prev => ({
         ...prev,
         keywords: [...keyWords, trimmedKeyword].join(', ')
@@ -159,7 +162,6 @@ export default function Home() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error for this field when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }));
     }
@@ -167,7 +169,6 @@ export default function Home() {
 
   const validateField = (field: keyof FormData): boolean => {
     try {
-      // Create a partial schema for just this field
       const fieldSchema = z.object({ [field]: formSchema.shape[field] });
       fieldSchema.parse({ [field]: formData[field] });
       setErrors(prev => ({ ...prev, [field]: "" }));
@@ -192,12 +193,10 @@ export default function Home() {
     };
 
     try {
-      // Validate all fields at once
       formSchema.parse(data);
-      setIsFetching(true)
-      // If validation passes, send data to API
+      setIsFetching(true);
       const token = localStorage.getItem('token');
-      const response = await fetch("https://litscout.onrender.com/generate_report", {
+      const response = await fetch(`${apiUrl}/generate_report`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -206,31 +205,47 @@ export default function Home() {
         body: JSON.stringify(data)
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        setIsFetching(false)
+        setIsFetching(false);
+        
         if (response.status === 401) {
           router.push('/login');
           return;
         }
+
+        if (result.error) {
+          // Handle specific backend errors
+          if (result.error === 'Research topic is required') {
+            toast.error("Please provide a research topic.");
+          } else if (result.error === 'Model generation failed') {
+            toast.error("We couldn't generate the research. Please try again with different parameters.");
+          } else {
+            toast.error(result.error);
+          }
+          return;
+        }
+
         throw new Error('Network response was not ok');
       }
 
-      setIsFetching(false)
-
-      const result = await response.json();
-      console.log(result)
+      setIsFetching(false);
       setResearchResults(result.research_summary);
     } catch (error) {
+      setIsFetching(false);
+      
       if (error instanceof z.ZodError) {
-  
         const newErrors: Record<string, string> = {};
         error.errors.forEach(err => {
           const field = err.path[0] as string;
           newErrors[field] = err.message;
         });
         setErrors(newErrors);
+      } else if (error instanceof Error) {
+        toast.error("An unexpected error occurred. Please try again.");
       } else {
-        console.error('Error:', error);
+        toast.error("An error occurred. Please try again.");
       }
     }
   };
@@ -242,7 +257,7 @@ export default function Home() {
     try {
       const token = localStorage.getItem('token');
       console.log("Token ", token)
-      const response = await fetch("https://litscout.onrender.com/save_research", {
+      const response = await fetch(`${apiUrl}/save_research`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -265,16 +280,13 @@ export default function Home() {
         throw new Error('Failed to save research');
       }
 
-      // Show success message or notification here
     } catch (error) {
       console.error('Error saving research:', error);
-      // Show error message or notification here
     } finally {
       setIsSaving(false);
     }
   };
 
-  // If loading or no user, don't render the main content
   if (isLoading || !user) {
     return null;
   }
@@ -535,16 +547,26 @@ export default function Home() {
           </AnimatePresence>
         </div>
       </div>
-      {/* {isFetching && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-        >
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-        </motion.div>
-      )} */}
+  
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-[#2A2A2A] p-6 rounded-lg text-white w-96">
+            <h3 className="text-xl font-semibold mb-4">Error</h3>
+            <p className="text-gray-400 mb-4">{errorModalMessage}</p>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => {
+                  setShowErrorModal(false);
+                  setErrorModalMessage('');
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

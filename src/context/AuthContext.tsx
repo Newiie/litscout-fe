@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
+import { apiUrl } from '@/lib/config';
 
 interface User {
   id: string
@@ -26,7 +27,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  // Initialize auth state from local storage
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post<User>('https://litscout.onrender.com/auth/login', {
+      const response = await axios.post<User>(`${apiUrl}/auth/login`, {
         email,
         password,
       })
@@ -46,10 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData)
       localStorage.setItem('user', JSON.stringify(userData))
 
-      // Set the token in localStorage or cookie
       if (userData.token) {
         localStorage.setItem('token', userData.token)
-        // Set default authorization header for future requests
         axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`
       }
 
@@ -64,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (email: string, username: string, password: string) => {
     try {
-      const response = await axios.post<User>('https://litscout.onrender.com/auth/register', {
+      const response = await axios.post<User>(`${apiUrl}/auth/register`, {
         email,
         username,
         password,
@@ -74,10 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData)
       localStorage.setItem('user', JSON.stringify(userData))
 
-      // Set the token in localStorage or cookie
       if (userData.token) {
         localStorage.setItem('token', userData.token)
-        // Set default authorization header for future requests
         axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`
       }
 

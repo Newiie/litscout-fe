@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/components/Sidebar';
+import { apiUrl } from '@/lib/config';
 
 interface SavedResearch {
   _id: string;
@@ -33,7 +34,7 @@ export default function History() {
       try {
         const token = localStorage.getItem('token');
         console.log("Token ", token)
-        const response = await fetch('https://litscout.onrender.com/saved_researches', {
+        const response = await fetch(`${apiUrl}/saved_researches`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -61,6 +62,27 @@ export default function History() {
     }
   }, [user, router]);
 
+  const handleDeleteResearch = async (researchId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/research/${researchId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete research');
+      }
+
+      // Remove the deleted research from the state
+      setSavedResearches(prev => prev.filter(research => research._id !== researchId));
+    } catch (error) {
+      console.error('Error deleting research:', error);
+    }
+  };
+
   if (isLoading || !user) {
     return null;
   }
@@ -68,7 +90,7 @@ export default function History() {
   return (
     <main className="fixed inset-0 flex bg-[#1E1E1E] text-white h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex-1 py-8 px-8 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto p-8">
         <h1 className="text-4xl font-bold mb-8">Research History</h1>
         {isLoadingResearches ? (
           <div key="loading" className="flex justify-center items-center h-64">
@@ -89,9 +111,18 @@ export default function History() {
             {savedResearches.map((research) => (
               <div
                 key={research._id}
-                className="bg-[#2A2A2A] rounded-lg p-6 hover:bg-[#3A3A3A] transition-colors cursor-pointer"
+                className="bg-[#2A2A2A] rounded-lg p-6 hover:bg-[#3A3A3A] transition-colors cursor-pointer relative"
                 onClick={() => router.push(`/research/${research._id}`)}
               >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteResearch(research._id);
+                  }}
+                  className="absolute top-3 right-3 bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Delete
+                </button>
                 <h2 className="text-2xl font-semibold mb-2">{research.title}</h2>
                 <p className="text-gray-400 mb-4">Research Topic: {research.research_topic}</p>
                 <p className="text-sm text-gray-500">
