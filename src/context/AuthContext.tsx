@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post<User>('http://localhost:5000/auth/login', {
+      const response = await axios.post<User>('https://litscout.onrender.com/auth/login', {
         email,
         password,
       })
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (email: string, username: string, password: string) => {
     try {
-      const response = await axios.post<User>('http://localhost:5000/auth/register', {
+      const response = await axios.post<User>('https://litscout.onrender.com/auth/register', {
         email,
         username,
         password,

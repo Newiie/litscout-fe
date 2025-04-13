@@ -33,7 +33,7 @@ export default function History() {
       try {
         const token = localStorage.getItem('token');
         console.log("Token ", token)
-        const response = await fetch('http://127.0.0.1:5000/saved_researches', {
+        const response = await fetch('https://litscout.onrender.com/saved_researches', {
           headers: {
             'Authorization': `Bearer ${token}`
           }

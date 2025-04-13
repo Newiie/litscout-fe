@@ -197,7 +197,7 @@ export default function Home() {
       setIsFetching(true)
       // If validation passes, send data to API
       const token = localStorage.getItem('token');
-      const response = await fetch("http://127.0.0.1:5000/generate_report", {
+      const response = await fetch("https://litscout.onrender.com/generate_report", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -242,7 +242,7 @@ export default function Home() {
     try {
       const token = localStorage.getItem('token');
       console.log("Token ", token)
-      const response = await fetch("http://127.0.0.1:5000/save_research", {
+      const response = await fetch("https://litscout.onrender.com/save_research", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -280,9 +280,9 @@ export default function Home() {
   }
 
   return (
-    <main className="fixed inset-0 flex bg-[#1E1E1E] text-white h-screen overflow-auto">
+    <main className="fixed inset-0 flex bg-[#1E1E1E] text-white h-screen" >
       <Sidebar />
-      <div className="flex-1 py-8 px-8">
+      <div className="flex-1 py-8 px-8 overflow-auto">
         <div className="flex w-full gap-4">
           <motion.div 
             // initial={{ width: "100%" }}

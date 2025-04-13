@@ -31,7 +31,7 @@ export default function Research({ params }: ResearchProps) {
     const fetchResearch = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://127.0.0.1:5000/research/${paramsData.id}`, {
+        const response = await fetch(`https://litscout.onrender.com/research/${paramsData.id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
