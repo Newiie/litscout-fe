@@ -3,6 +3,51 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* SCROLLBAR */
+body, .content, .landing-page {
+  --sb-track-color: #fefefe;
+  --sb-thumb-color: #39415c;
+  --sb-size: 5px;
+  padding-right: 10px;
+}
+
+body::-webkit-scrollbar, 
+.content::-webkit-scrollbar,
+.landing-page::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+body::-webkit-scrollbar-track, 
+.content::-webkit-scrollbar-track,
+.landing-page::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 3px;
+}
+
+body::-webkit-scrollbar-thumb, 
+.content::-webkit-scrollbar-thumb,
+.landing-page::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 3px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body, 
+  .content,
+  .landing-page {
+      scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
