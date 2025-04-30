@@ -125,18 +125,18 @@ const AboutPage = () => {
           <div className="flex justify-center gap-10 flex-wrap">
             {[
               {
-                name: "Dr. Adviser Name",
+                name: "Mr. Jun Albert Pardillo",
                 role: "Adviser",
                 img: "/adviser.jpg",
               },
               {
                 name: "Raiza Pagatpatan",
-                role: "Presenter / Developer",
+                role: "Author / Developer",
                 img: "/raiza.jpg",
               },
               {
                 name: "Jethro Cenas",
-                role: "Developer",
+                role: "Co-author / Developer",
                 img: "/jethro.jpg",
               },
             ].map((member) => (

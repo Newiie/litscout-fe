@@ -292,15 +292,13 @@ export default function Home() {
   }
 
   return (
-    <main className="fixed inset-0 flex bg-[#1E1E1E] text-white h-screen" >
+    <main className="bg-[#1E1E1E] text-white min-h-screen w-full">
       <Sidebar />
-      <div className="flex-1 py-8 px-8 overflow-auto">
-        <div className="flex w-full gap-4">
-          <motion.div 
-            // initial={{ width: "100%" }}
-            // animate={{ width: researchResults ? "50%" : "100%" }}
+      <div className="flex-1 py-4 px-2 md:py-8 md:px-8 overflow-auto mt-16 md:mt-0">
+        <div className="flex flex-col lg:flex-row w-full gap-4">
+          <motion.div
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="relative overflow-y-auto w-1/2 mx-auto content"
+            className="relative overflow-y-auto w-full lg:w-1/2 mx-auto content"
           >
             <h1 className="text-[4rem] text-bold">Litscout</h1>
             <h2 className="text-[2rem] text-semibold">Related Literature LLM Tool for Researchers</h2>
@@ -522,10 +520,10 @@ export default function Home() {
             {researchResults && (
               <motion.div
                 initial={{ width: 0, opacity: 0 }}
-                animate={{ width: "50%", opacity: 1 }}
+                animate={{ width: '100%', opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="bg-[#2A2A2A] rounded-lg p-6 overflow-y-auto content"
+                className="bg-[#2A2A2A] rounded-lg p-4 md:p-6 mt-6 lg:mt-0 overflow-y-auto content w-full lg:w-1/2"
               >
                 <ResearchDocument
                   title={researchResults.title}

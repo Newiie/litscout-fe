@@ -90,8 +90,8 @@ export default function History() {
   return (
     <main className="fixed inset-0 flex bg-[#1E1E1E] text-white h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex-1 overflow-y-auto p-8">
-        <h1 className="text-4xl font-bold mb-8">Research History</h1>
+      <div className="flex-1 mt-[4rem] overflow-y-auto p-8">
+        <h1 className="text-4xl text-center font-bold mb-8">Research History</h1>
         {isLoadingResearches ? (
           <div key="loading" className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
