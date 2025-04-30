@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
+import Navbar from '@/components/navbar'
 
 const registerSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -75,6 +76,8 @@ const RegisterPage = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen flex items-center justify-center bg-[#1E1E1E]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -188,6 +191,7 @@ const RegisterPage = () => {
         </div>
       </motion.div>
     </div>
+    </>
   )
 }
 
